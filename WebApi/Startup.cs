@@ -1,6 +1,9 @@
+using Business.DependencyResolvers;
 using DataAccess.Concrete.EntityFramework;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +24,15 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<User, Role>(opt =>
+            {
+                opt.User.RequireUniqueEmail = true;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireUppercase = false;
 
+            }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
+
+            BusinessModule.Load(services);
             services.AddControllers();
             services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlCon")));
             services.AddSwaggerGen(c =>
