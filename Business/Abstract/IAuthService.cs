@@ -7,5 +7,7 @@ namespace Business.Abstract
     public interface IAuthService
     {
         Task<IResult> CreateAdminUser(CreateAdminUserDto createAdminUserDto);
+        Task<IResult> CreateUser(CreateUserDto createUserDto);
+        Task<IDataResult<LoginResponseDto>> Login(LoginRequestDto loginRequestDto);
     }
 }

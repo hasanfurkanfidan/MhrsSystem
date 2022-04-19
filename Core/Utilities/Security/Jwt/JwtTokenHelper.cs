@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 
 namespace Core.Utilities.Security.Jwt
@@ -44,18 +43,17 @@ namespace Core.Utilities.Security.Jwt
                     audience: tokenOptions.Audience,
                     expires: _accessTokenExpiration,
                     notBefore: DateTime.Now,
-                    claims: SetClaims(user, user.RoleIds),
+                    claims: SetClaims(user, user.Roles),
                     signingCredentials: signingCredentials
             );
             return jwt;
         }
-        private IEnumerable<Claim> SetClaims(JwtAuthUser jwtAuthUser, List<int> roleIds)
+        private IEnumerable<Claim> SetClaims(JwtAuthUser jwtAuthUser, List<string> roles)
         {
             var claims = new List<Claim>();
             claims.AddNameIdentifier(jwtAuthUser.UserId.ToString());
             claims.AddEmail(jwtAuthUser.Email);
-            claims.AddName($"{jwtAuthUser.FirstName} {jwtAuthUser.LastName}");
-            claims.AddRoles(roleIds.Select(c => c.ToString()).ToArray());
+            claims.AddRoles(roles.ToArray());
 
             var jsonString = JsonConvert.SerializeObject(jwtAuthUser);
             claims.AddUserData(jsonString);
