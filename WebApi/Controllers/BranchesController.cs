@@ -10,13 +10,14 @@ namespace WebApi.Controllers
     public class BranchesController : BaseController
     {
         private readonly IBranchService _branchService;
-        public BranchesController(IBranchService branchService)
+        public BranchesController(IBranchService branchService, IAuthService authService) : base(authService)
         {
             _branchService = branchService;
         }
         [HttpPost]
         public async Task<IActionResult> Create(BranchCreateDto branchCreateDto)
         {
+            var a = await base.GetLoggedUserInformation(); ;
             return base.GetResponseOnlyResult(await _branchService.Create(branchCreateDto));
         }
     }

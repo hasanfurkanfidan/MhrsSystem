@@ -1,4 +1,6 @@
 using Business.DependencyResolvers;
+using Core.Extensions;
+using Core.Utilities.IOC;
 using Core.Utilities.Security.Encryption;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
@@ -28,6 +30,7 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDependencyResolvers(new ICoreModule[] { new CoreModule() });
             services.AddIdentity<User, Role>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
@@ -37,7 +40,11 @@ namespace WebApi
             }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             BusinessModule.Load(services);
-            services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(
+                       options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                       );
+
             services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("SqlCon")));
             var tokenOptions = Configuration.GetSection("TokenOptions").Get<Core.Utilities.Security.Jwt.TokenOptions>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -52,6 +59,11 @@ namespace WebApi
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey),
                 };
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                    builder => builder.AllowAnyHeader());
             });
             services.AddSwaggerGen(c =>
             {
@@ -96,9 +108,19 @@ namespace WebApi
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
             }
 
+            app.ConfigureCustomExceptionMiddleware();
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyHeader();
+                builder.AllowAnyMethod();
+            });
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

@@ -9,5 +9,6 @@ namespace Business.Abstract
         Task<IResult> CreateAdminUser(CreateAdminUserDto createAdminUserDto);
         Task<IResult> CreateUser(CreateUserDto createUserDto);
         Task<IDataResult<LoginResponseDto>> Login(LoginRequestDto loginRequestDto);
+        Task<IDataResult<string>> GetClaim(string accessToken, string claimType);
     }
 }

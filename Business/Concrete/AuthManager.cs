@@ -91,6 +91,15 @@ namespace Business.Concrete
             return new SuccessResult();
         }
 
+        public async Task<IDataResult<string>> GetClaim(string accessToken, string claimType)
+        {
+            return await Task.Run(() =>
+            {
+                var result = _tokenHelper.GetClaim(accessToken, claimType);
+                return new DataResult<string>(result, true);
+            });
+        }
+
         public async Task<IDataResult<LoginResponseDto>> Login(LoginRequestDto loginRequestDto)
         {
             var user = await _userManager.FindByEmailAsync(loginRequestDto.Email);

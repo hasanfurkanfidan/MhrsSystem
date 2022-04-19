@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Core.Utilities.Security.Jwt
@@ -83,6 +84,16 @@ namespace Core.Utilities.Security.Jwt
                 return false;
             }
             return true;
+        }
+
+        public string GetClaim(string accessToken, string claimType)
+        {
+            accessToken = accessToken.Replace("Bearer", string.Empty).Trim();
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var securityToken = tokenHandler.ReadToken(accessToken) as JwtSecurityToken;
+
+            var stringClaimValue = securityToken.Claims.First(claim => claim.Type == claimType).Value;
+            return stringClaimValue;
         }
     }
 }

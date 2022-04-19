@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Business.Abstract;
+using Business.Aop;
+using Core.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -17,6 +19,7 @@ namespace Business.Concrete
             _mapper = mapper;
             _branchDal = branchDal;
         }
+        [SecuredOperation(EntityConstants.Roles.Admin)]
         public async Task<IResult> Create(BranchCreateDto branchCreateDto)
         {
             var branch = _mapper.Map<Branch>(branchCreateDto);

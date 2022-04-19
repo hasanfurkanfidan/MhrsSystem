@@ -6,5 +6,6 @@ namespace Core.Utilities.Security.Jwt
     {
         IAccessToken CreateToken(JwtAuthUser user);
         bool ValidateToken(string accessToken);
+        string GetClaim(string accessToken, string claimType);
     }
 }
