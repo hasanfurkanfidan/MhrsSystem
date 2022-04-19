@@ -1,6 +1,7 @@
 ﻿using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using Entities.DependencyResolver;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Business.DependencyResolvers
@@ -18,6 +19,8 @@ namespace Business.DependencyResolvers
             services.AddScoped<IHospitalDal, EfHospitalDal>();
 
             services.AddScoped<ITokenHelper, JwtTokenHelper>();
+
+            EntitiesModule.Load(services);
         }
     }
 }
