@@ -19,7 +19,7 @@ namespace Business.Concrete
             _mapper = mapper;
             _branchDal = branchDal;
         }
-        [SecuredOperation(EntityConstants.Roles.Admin)]
+        //[SecuredOperation(EntityConstants.Roles.Admin)]
         public async Task<IResult> Create(BranchCreateDto branchCreateDto)
         {
             var branch = _mapper.Map<Branch>(branchCreateDto);

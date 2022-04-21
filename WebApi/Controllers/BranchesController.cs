@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Constants;
 using Entities.Dtos.Branch;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -17,7 +19,10 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BranchCreateDto branchCreateDto)
         {
-            var a = await base.GetLoggedUserInformation(); ;
+            var loggedUser = await base.GetLoggedUserInformation();
+            if (!loggedUser.Roles.Contains(EntityConstants.Roles.Admin))
+                return BadRequest(Messages.AuthorizationDenied);
+
             return base.GetResponseOnlyResult(await _branchService.Create(branchCreateDto));
         }
     }

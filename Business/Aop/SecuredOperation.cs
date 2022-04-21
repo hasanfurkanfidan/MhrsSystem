@@ -29,7 +29,7 @@ namespace Business.Aop
             if (roleClaims != null && _rolePermissions.Any(r => roleClaims.Contains(r)))
                 return;
 
-            throw new Exception($"{Messages.AuthorizationDenied}, Adres->{invocation.Method.DeclaringType.Name}::{invocation.Method.Name}");
+            throw new Exception($"{Messages.AuthorizationDenied}");
         }
     }
 }
